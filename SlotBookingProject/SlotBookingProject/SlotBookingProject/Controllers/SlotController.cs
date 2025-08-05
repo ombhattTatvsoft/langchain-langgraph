@@ -51,10 +51,10 @@ namespace SlotBookingProject.Controllers
             return Ok(slot);
         }
 
-        [HttpGet("GetSlotByContactAndDate")]
-        public async Task<IActionResult> GetSlotByContactNumber(string contactNumber, DateOnly bookingDate)
+        [HttpGet("GetSlotByContact")]
+        public async Task<IActionResult> GetSlotByContactNumber(string contactNumber)
         {
-            List<Slot> slots = await _context.Slots.Where(s => s.ContactNumber.Contains(contactNumber) && s.BookingDate == bookingDate && s.IsActive == true).ToListAsync();
+            List<Slot> slots = await _context.Slots.Where(s => s.ContactNumber.Contains(contactNumber) && s.IsActive == true).ToListAsync();
             return Ok(slots);
         }
     }

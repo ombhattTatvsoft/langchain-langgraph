@@ -1459,11 +1459,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Project\\Langchain_demo\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject.csproj",
+      "projectUniqueName": "d:\\Project\\Langchain_demo\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject.csproj",
       "projectName": "SlotBookingProject",
-      "projectPath": "D:\\Project\\Langchain_demo\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject.csproj",
+      "projectPath": "d:\\Project\\Langchain_demo\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject.csproj",
       "packagesPath": "C:\\Users\\pci71\\.nuget\\packages\\",
-      "outputPath": "D:\\Project\\Langchain_demo\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject\\obj\\",
+      "outputPath": "d:\\Project\\Langchain_demo\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\pci71\\AppData\\Roaming\\NuGet\\NuGet.Config"

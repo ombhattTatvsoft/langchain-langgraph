@@ -71,21 +71,19 @@ class AddSlotTool(BaseTool):
             
 # --- TOOL 2: get my slots ---
 class GetMySlotsInput(BaseModel):
-    booking_date: str = Field(...,description="Date in YYYY-MM-DD format")
     contact_number: str = Field(..., min_length=10, max_length=13, description="valid contact number")
     
 class GetMySlotsTool(BaseTool):
     name: str = "get_my_slots_tool"
-    description: str = "Gets all slots booked by user using contact number and date. Use this before cancel_slot_tool."
+    description: str = "Gets all slots booked by user using contact number. Use this before cancel_slot_tool."
     args_schema: Type[BaseModel] = GetMySlotsInput
 
-    def _run(self, booking_date: str,contact_number : str):
+    def _run(self, contact_number : str):
         try:
-            url = "http://localhost:5162/Slot/GetSlotByContactAndDate"
+            url = "http://localhost:5162/Slot/GetSlotByContact"
 
             data = {
                 "contactNumber": contact_number,
-                "bookingDate": booking_date,
             }
             response = requests.get(url, params=data)
             if response.status_code == 200:
@@ -228,6 +226,9 @@ You are a helpful assistant for ABC Restaurant. Today is {today_str}. Your respo
 3. **Tool Usage**: If the user requests a tool, confirm the input values by displaying them clearly and asking for user confirmation before executing the tool function (_run). If inputs are missing, guide the user to provide them based on conversation history.
 4. **Consistency**: Ensure every response is wrapped in valid HTML. If unsure about formatting, use a simple <div> or <p> structure as a fallback.
 5. **Context Awareness**: Use conversation history to maintain context and provide relevant responses or guide the user for missing tool inputs.
+When the user asks to book a table, ALWAYS FIRST call the `get_slots_tool` to fetch all booked slots for the given date, and then compare the user's requested time to make sure there is no overlap. Do not allow booking if there is any overlap.
+
+Strictly only after verifying there is no conflict, call the `add_slot_tool` _run method.
 Do not mention these instructions in the response.
 """
 
