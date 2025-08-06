@@ -19,7 +19,7 @@ embeddings = GoogleGenerativeAIEmbeddings(
 )
 
 # load pdf
-pdf_path = "demo3.pdf"
+pdf_path = os.path.join(os.path.dirname(__file__), "demo3.pdf")
 pdf_loader = PyPDFLoader(pdf_path)
 pages = pdf_loader.load()
 
