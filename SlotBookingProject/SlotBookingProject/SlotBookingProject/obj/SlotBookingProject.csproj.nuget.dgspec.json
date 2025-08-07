@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "d:\\Project\\Langchain_demo\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject.csproj": {}
+    "D:\\Project\\Langchain_demo\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject.csproj": {}
   },
   "projects": {
-    "d:\\Project\\Langchain_demo\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject.csproj": {
+    "D:\\Project\\Langchain_demo\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "d:\\Project\\Langchain_demo\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject.csproj",
+        "projectUniqueName": "D:\\Project\\Langchain_demo\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject.csproj",
         "projectName": "SlotBookingProject",
-        "projectPath": "d:\\Project\\Langchain_demo\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject.csproj",
+        "projectPath": "D:\\Project\\Langchain_demo\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject.csproj",
         "packagesPath": "C:\\Users\\pci71\\.nuget\\packages\\",
-        "outputPath": "d:\\Project\\Langchain_demo\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject\\obj\\",
+        "outputPath": "D:\\Project\\Langchain_demo\\SlotBookingProject\\SlotBookingProject\\SlotBookingProject\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\pci71\\AppData\\Roaming\\NuGet\\NuGet.Config"

@@ -26,18 +26,18 @@ namespace SlotBookingProject.Controllers
         [HttpPost]
         public async Task<IActionResult> AddSlot(Slot slot)
         {
-            // var fromTime = slot.BookingTime!.Value.AddMinutes(-59);
-            // var toTime = slot.BookingTime!.Value.AddMinutes(59);
+            var fromTime = slot.BookingTime!.Value.AddMinutes(-59);
+            var toTime = slot.BookingTime!.Value.AddMinutes(59);
 
-            // bool conflictExists = await _context.Slots.AnyAsync(s =>
-            //     s.BookingDate!.Value == slot.BookingDate &&     
-            //     s.BookingTime >= fromTime && s.BookingTime <= toTime
-            // );
+            bool conflictExists = await _context.Slots.AnyAsync(s =>
+                s.BookingDate!.Value == slot.BookingDate &&     
+                s.BookingTime >= fromTime && s.BookingTime <= toTime
+            );
 
-            // if (conflictExists)
-            // {
-            //     return Conflict("A slot already exists within ±1 hour of the selected time.");
-            // }
+            if (conflictExists)
+            {
+                return Conflict("A slot already exists within ±1 hour of the selected time.");
+            }
 
             _context.Slots.Add(slot);
             await _context.SaveChangesAsync();

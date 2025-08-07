@@ -78,7 +78,7 @@ else:
     vector_store = FAISS.from_documents(chunks, embeddings)
     vector_store.save_local(FAISS_STORE_DIR)
     
-retriever = vector_store.as_retriever(search_kwargs={"k": 4})
+retriever = vector_store.as_retriever(search_kwargs={"k": 3})
 
 # --- TOOL 1: RAG Retrieval ---
 @tool
@@ -182,7 +182,7 @@ def get_slots_tool(booking_date: str):
 
 # --- LLM Setup ---
 llm = ChatGoogleGenerativeAI(
-    model="gemini-1.5-flash",
+    model="gemini-2.0-flash",
     api_key=os.getenv("GEMINI_API_KEY"),
     temperature=0.4
 )
