@@ -17,13 +17,14 @@ from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmb
 from datetime import date
 import requests
 from langchain_community.document_loaders import WebBaseLoader, PyPDFLoader
+from langchain_community.document_loaders import RecursiveUrlLoader
 from langgraph.checkpoint.memory import MemorySaver
 
 load_dotenv()
 
 file_path = os.path.join(os.path.dirname(__file__), "restaurant_info.json")
-Web_Url = "https://en.wikipedia.org/wiki/Main_Page"
-pdf_path = os.path.join(os.path.dirname(__file__), "restaurant_details.pdf")
+Web_Url = "https://www.1944.in/"
+pdf_path = os.path.join(os.path.dirname(__file__), "1944_menu.pdf")
 
 try:
     with open(file_path, "r") as f:
@@ -48,9 +49,9 @@ def json_to_documents(json_data: dict) -> list[Document]:
     return documents
 
 def url_to_document(url: str) -> list[Document]:
-    loader = WebBaseLoader(url)
+    loader = RecursiveUrlLoader(url)
     documents = loader.load()
-    return documents[0]
+    return documents
 
 def pdf_to_document(pdf_path: str) -> list[Document]:
     pdf_loader = PyPDFLoader(pdf_path)
@@ -71,8 +72,9 @@ if os.path.exists(FAISS_STORE_DIR) and os.path.exists(os.path.join(FAISS_STORE_D
         allow_dangerous_deserialization=True
     )
 else:  
-    documents = json_to_documents(knowledge)
-    documents.append(url_to_document(Web_Url))
+    documents = []
+    # documents.extend(json_to_documents(knowledge))
+    documents.extend(url_to_document(Web_Url))
     documents.extend(pdf_to_document(pdf_path))
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
     chunks = text_splitter.split_documents(documents)
