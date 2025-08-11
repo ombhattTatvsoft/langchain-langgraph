@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import parse from 'html-react-parser';
-import MicIcon from '@mui/icons-material/Mic';
+import parse from "html-react-parser";
+import MicIcon from "@mui/icons-material/Mic";
 
 // Check browser compatibility for SpeechRecognition
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const SpeechRecognition =
+  window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = SpeechRecognition ? new SpeechRecognition() : null;
 
 const Chatbot = () => {
@@ -30,8 +31,7 @@ const Chatbot = () => {
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
 
-    if(isListening)
-      recognition.start();
+    if (isListening) recognition.start();
 
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
@@ -49,8 +49,10 @@ const Chatbot = () => {
 
   // 🔊 Optional: Speak the bot response
   const speak = (text) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(text, "text/html");
     const synth = window.speechSynthesis;
-    const utterance = new SpeechSynthesisUtterance(text);
+    const utterance = new SpeechSynthesisUtterance(doc.body.textContent);
     utterance.lang = "";
     synth.speak(utterance);
   };
@@ -69,7 +71,17 @@ const Chatbot = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: input }),
       });
-
+      // const response = await fetch(
+      //   "http://localhost:8000/api/chat/8858996f-e8d0-477e-8276-77ac371d7c88",
+      //   {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //       "x-bot-secret": "9f3f9c09c44844d689be29a894f89cdf",
+      //     },
+      //     body: JSON.stringify({ message: input }),
+      //   }
+      // );
       const data = await response.json();
       console.log(data)
       if (data.error) {
@@ -107,23 +119,26 @@ const Chatbot = () => {
       >
         {messages.map((m, i) => (
           <div
-          key={i}
-          className={`max-w-[80%] ${
-            m.role === "user"
-              ? "self-end ml-auto text-right"
-              : "bg-gray-200 rounded-xl self-start mr-auto text-left"
-          }`}
-        >
-          <div className={`inline-block p-3 rounded-xl ${
-            m.role === "user"
-              ? "bg-blue-100"
-              : ""
-          }`}>
-            <div className="text-base text-gray-800">{parse(m.parts[0]?.text)}
-              <span onClick={() => speak(m.parts[0]?.text)}><MicIcon /></span>
+            key={i}
+            className={`max-w-[80%] ${
+              m.role === "user"
+                ? "self-end ml-auto text-right"
+                : "bg-gray-200 rounded-xl self-start mr-auto text-left"
+            }`}
+          >
+            <div
+              className={`inline-block p-3 rounded-xl ${
+                m.role === "user" ? "bg-blue-100" : ""
+              }`}
+            >
+              <div className="text-base text-gray-800">
+                {parse(m.parts[0]?.text)}
+                <span onClick={() => speak(m.parts[0]?.text)}>
+                  <MicIcon />
+                </span>
+              </div>
             </div>
           </div>
-        </div>
         ))}
       </div>
 
@@ -138,7 +153,9 @@ const Chatbot = () => {
         />
         <button
           onClick={handleVoiceInput}
-          className={`px-4 py-2 ${isListening ? "bg-red-600" : "bg-blue-600"} text-white rounded-lg hover:bg-blue-700 transition`}
+          className={`px-4 py-2 ${
+            isListening ? "bg-red-600" : "bg-blue-600"
+          } text-white rounded-lg hover:bg-blue-700 transition`}
           title="Click to Speak"
         >
           <MicIcon />

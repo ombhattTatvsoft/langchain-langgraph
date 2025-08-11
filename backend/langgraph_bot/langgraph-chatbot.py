@@ -20,9 +20,9 @@ from langchain_community.document_loaders import WebBaseLoader, PyPDFLoader
 
 load_dotenv()
 
-file_path = os.path.join(os.path.dirname(__file__), "restaurant-data.json")
-Web_Url = "http://books.toscrape.com/"
-pdf_path = os.path.join(os.path.dirname(__file__), "demo3.pdf")
+file_path = os.path.join(os.path.dirname(__file__), "restaurant_info.json")
+Web_Url = "https://en.wikipedia.org/wiki/Main_Page"
+pdf_path = os.path.join(os.path.dirname(__file__), "restaurant_details.pdf")
 
 try:
     with open(file_path, "r") as f:

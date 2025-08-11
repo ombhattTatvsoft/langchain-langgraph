@@ -21,9 +21,9 @@ from langgraph.checkpoint.memory import MemorySaver
 
 load_dotenv()
 
-file_path = os.path.join(os.path.dirname(__file__), "restaurant-data.json")
-Web_Url = "http://books.toscrape.com/"
-pdf_path = os.path.join(os.path.dirname(__file__), "demo3.pdf")
+file_path = os.path.join(os.path.dirname(__file__), "restaurant_info.json")
+Web_Url = "https://en.wikipedia.org/wiki/Main_Page"
+pdf_path = os.path.join(os.path.dirname(__file__), "restaurant_details.pdf")
 
 try:
     with open(file_path, "r") as f:
@@ -182,7 +182,7 @@ def get_slots_tool(booking_date: str):
 llm = ChatGoogleGenerativeAI(
     model="gemini-2.0-flash",
     api_key=os.getenv("GEMINI_API_KEY"),
-    temperature=1
+    temperature=0.4
 )
 
 tools = [retriever_tool, add_slot_tool, get_my_slots_tool, cancel_slot_tool, get_slots_tool]
@@ -234,7 +234,6 @@ def agent_node(state: AgentState) -> AgentState:
     
     return {"messages": messages}
 
-# --- Tool Node ---
 tools_dict = {tool.name: tool for tool in tools}
 
 def take_action(state: AgentState) -> AgentState:
