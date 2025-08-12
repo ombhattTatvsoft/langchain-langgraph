@@ -17,8 +17,10 @@ from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmb
 from datetime import date
 import requests
 from langchain_community.document_loaders import WebBaseLoader, PyPDFLoader
-from langchain_community.document_loaders import RecursiveUrlLoader
+from langchain_community.document_loaders import RecursiveUrlLoader, UnstructuredURLLoader
 from langgraph.checkpoint.memory import MemorySaver
+from bs4 import BeautifulSoup
+import re
 
 load_dotenv()
 
@@ -49,10 +51,51 @@ def json_to_documents(json_data: dict) -> list[Document]:
     return documents
 
 def url_to_document(url: str) -> list[Document]:
-    loader = RecursiveUrlLoader(url)
-    documents = loader.load()
-    return documents
+    def clean_content(html: str) -> str:
+        try:
+            soup = BeautifulSoup(html, "html.parser")
+            # Remove scripts, styles, nav, footer, header
+            for element in soup(["script", "style", "nav", "footer", "header"]):
+                element.decompose()
+            text = soup.get_text(separator=" ", strip=True)
+            text = re.sub(r"\s+", " ", text).strip()
+            return text
+        except Exception:
+            return ""
 
+    def url_filter(url: str, visited: set) -> bool:
+        if url in visited:
+            return False
+        exclude_patterns = [
+            r".*\.(jpg|png|gif|jpeg|css|js|woff|woff2|ttf|ico|svg)$",
+            r".*/(login|signup|admin|cart|checkout).*",
+        ]
+        return not any(re.match(pattern, url) for pattern in exclude_patterns)
+
+    visited_urls = set()
+
+    try:
+        # Step 1: Crawl for URLs
+        crawler = RecursiveUrlLoader(url=url, prevent_outside=True)
+        pages = crawler.load()
+
+        # Step 2: Filter URLs
+        filtered_urls = []
+        for page in pages:
+            source_url = page.metadata.get("source", url)
+            if url_filter(source_url, visited_urls):
+                visited_urls.add(source_url)
+                filtered_urls.append(source_url)
+
+        # Step 3: Load cleaned content for filtered URLs
+        loader = UnstructuredURLLoader(urls=filtered_urls, extractor=clean_content)
+        raw_docs = loader.load()
+        return [doc for doc in raw_docs if len(doc.page_content.strip()) > 50]
+
+    except Exception as e:
+        print(f"Error scraping {url}: {e}")
+        return []
+    
 def pdf_to_document(pdf_path: str) -> list[Document]:
     pdf_loader = PyPDFLoader(pdf_path)
     pages = pdf_loader.load()
@@ -81,7 +124,7 @@ else:
     vector_store = FAISS.from_documents(chunks, embeddings)
     vector_store.save_local(FAISS_STORE_DIR)
     
-retriever = vector_store.as_retriever(search_kwargs={"k": 3})
+retriever = vector_store.as_retriever(search_kwargs={"k": 5})
 
 # --- TOOL 1: RAG Retrieval ---
 @tool
@@ -196,8 +239,8 @@ class AgentState(TypedDict):
 
 # --- System Prompt ---
 system_message = f"""
-You are a helpful assistant for ABC Restaurant. Today is {today_str}. Your responses must always be wrapped in valid HTML tags (<div>, <p>, etc.) without markdown code blocks(```html). Follow these steps:
-    **Restaurant Queries** : For questions about ABC Restaurant (e.g., menu, hours), use retriever_tool to fetch information.
+You are a helpful assistant for Restaurant. Today is {today_str}.Follow these steps:
+    **Restaurant Queries** : For questions about Restaurant (e.g., menu, hours), use retriever_tool to fetch information.
     **General Queries** : For non-restaurant questions without tools, respond conversationally.
     **Booking Process**:
     - When a user requests to book a table (e.g., contains "add slot"), 
@@ -206,6 +249,7 @@ You are a helpful assistant for ABC Restaurant. Today is {today_str}. Your respo
     - Do not ask for confirmation more than once for the same booking request.
     **Tool Usage** : For other tool requests, confirm inputs and execute after user confirmation.
     **Context Awareness** : Use the full conversation history in messages to maintain context and avoid redundant questions.
+    Your responses must always be wrapped in valid HTML tags (<div>, <p>, <ul>, <li> etc.) must not include markdown code blocks(```html).  
     If the user speaks in another language translate it in english to use for tools and knowledge base then reconvert the response to user's input language.
 """
 

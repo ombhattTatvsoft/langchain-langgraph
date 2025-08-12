@@ -110,7 +110,7 @@ const Chatbot = () => {
   return (
     <div className="w-lg p-6 bg-gray-50 rounded-2xl shadow-lg font-sans">
       <h2 className="text-2xl font-semibold text-center mb-4">
-        🍽️ ABC Restaurant Chatbot
+        🍽️ Restaurant Chatbot
       </h2>
 
       <div
@@ -133,9 +133,9 @@ const Chatbot = () => {
             >
               <div className="text-base text-gray-800">
                 {parse(m.parts[0]?.text)}
-                <span onClick={() => speak(m.parts[0]?.text)}>
+                {m.role === "model" && <span onClick={() => speak(m.parts[0]?.text)}>
                   <MicIcon />
-                </span>
+                </span>}
               </div>
             </div>
           </div>
